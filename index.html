@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legénybúcsú Tinder</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+</head>
+<body>
+    <div class="tinder-container">
+        <div class="header">
+            <i id="reset-btn" class="fa-solid fa-fire"></i>
+        </div>
+        <div class="card-container"></div>
+        <div class="no-more-cards">
+            <h1>Ne nyomkodd már ezt a szart!</h1>
+            <p>Már megtaláltad a tökéletes párt!</p>
+            <img id="final-image" src="" alt="Végső üzenet kép" style="max-width: 100%; height: auto; border-radius: 10px; margin-top: 20px; display: none;">
+        </div>
+        <div class="action-buttons">
+            <button id="dislike-btn"><i class="fa-solid fa-xmark"></i></button>
+            <button id="like-btn"><i class="fa-solid fa-heart"></i></button>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="modal-gallery">
+                <button class="gallery-btn prev-btn">&lt;</button>
+                <img id="modal-img" src="" alt="Profilkép">
+                <button class="gallery-btn next-btn">&gt;</button>
+                <div class="image-counter" id="modal-counter"></div>
+            </div>
+            <h2 id="modal-name"></h2>
+            <p id="modal-description"></p>
+        </div>
+    </div>
+
+    <script src="profilok.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

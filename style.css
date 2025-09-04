@@ -21,7 +21,7 @@ body {
 
 .tinder-container {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     height: -webkit-fill-available; /* Safari (iPhone) magasság korrekció */
     background-color: #fff;
     display: flex;
@@ -38,7 +38,7 @@ body {
     padding: 15px;
     border-bottom: 1px solid #e8e8e8;
     position: relative;
-    z-index: 10;
+    z-index: 30; /* Biztosítja, hogy a végkép felett legyen */
 }
 
 .header .fa-fire {
@@ -59,7 +59,7 @@ body {
     flex-grow: 1;
     position: relative;
     width: 90%;
-    margin: 2% 5%; /* Kisebb függőleges margó */
+    margin: 2% 5%;
 }
 
 .card {
@@ -104,17 +104,8 @@ body {
     -webkit-backdrop-filter: blur(4px);
 }
 
-.profile-info h2 {
-    margin: 0;
-    font-size: 24px;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-}
-
-.profile-info p {
-    margin-top: 5px;
-    font-size: 16px;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-}
+.profile-info h2 { margin: 0; font-size: 24px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+.profile-info p { margin-top: 5px; font-size: 16px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
 
 .card .label {
     position: absolute;
@@ -130,26 +121,10 @@ body {
     pointer-events: none;
     text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
-
-.card .label.like {
-    color: #2db9b3;
-    border: 5px solid #2db9b3;
-    transform: translate(-50%, -50%) scale(1) rotate(-30deg);
-}
-
-.card .label.nope {
-    color: #fd5068;
-    border: 5px solid #fd5068;
-    transform: translate(-50%, -50%) scale(1) rotate(30deg);
-}
-
-.card.swiping-left .label.nope {
-    opacity: 1;
-}
-
-.card.swiping-right .label.like {
-    opacity: 1;
-}
+.card .label.like { color: #2db9b3; border: 5px solid #2db9b3; transform: translate(-50%, -50%) scale(1) rotate(-30deg); }
+.card .label.nope { color: #fd5068; border: 5px solid #fd5068; transform: translate(-50%, -50%) scale(1) rotate(30deg); }
+.card.swiping-left .label.nope { opacity: 1; }
+.card.swiping-right .label.like { opacity: 1; }
 
 .action-buttons {
     display: flex;
@@ -158,7 +133,8 @@ body {
     padding: 15px 0;
     background-color: #fff;
     position: relative;
-    z-index: 10;
+    z-index: 30; /* Biztosítja, hogy a végkép felett legyen */
+    padding-bottom: calc(15px + env(safe-area-inset-bottom)); /* A biztonságos területhez igazítás */
 }
 
 .action-buttons button {
@@ -172,178 +148,6 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: transform 0.2s;
 }
-
-.action-buttons button:hover {
-    transform: scale(1.1);
-}
-
+.action-buttons button:hover { transform: scale(1.1); }
 #dislike-btn i { color: #fd5068; }
-#like-btn i { color: #2db9b3; }
-
-.no-more-cards {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
-    color: #555;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
-    z-index: 20;
-    box-sizing: border-box;
-}
-
-#final-image {
-    display: none;
-    width: auto;
-    max-width: 90%;
-    max-height: 70vh;
-    object-fit: contain;
-    border-radius: 10px;
-    margin-top: 20px;
-}
-
-.modal-overlay {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    animation: fadeIn 0.3s;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 30px;
-    font-weight: bold;
-    color: #aaa;
-    cursor: pointer;
-    z-index: 15;
-}
-
-.close-btn:hover {
-    color: #333;
-}
-
-.modal-gallery {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1; 
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
-
-#modal-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; 
-    display: block;
-}
-
-.gallery-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.4);
-    color: white;
-    border: none;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 5px 15px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    z-index: 10;
-}
-
-.gallery-btn:hover {
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.prev-btn {
-    left: 10px;
-}
-
-.next-btn {
-    right: 10px;
-}
-
-.image-counter {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    font-size: 14px;
-    padding: 5px 10px;
-    border-radius: 15px;
-    z-index: 10;
-}
-
-#modal-name {
-    font-size: 22px;
-    margin-bottom: 10px;
-}
-
-#modal-description {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #555;
-}
-
-/* ================================================= */
-/* ==== ASZTALI GÉP / NAGYOBB KÉPERNYŐ STÍLUSOK ==== */
-/* ================================================= */
-
-@media (min-width: 451px) {
-    body {
-        /* Visszaállítjuk a szép színátmenetes hátteret asztali nézeten */
-        background: linear-gradient(to bottom right, #FD297B, #FF655B);
-    }
-
-    .tinder-container {
-        /* Fix méretet adunk a konténernek, hogy telefon-szerű legyen */
-        width: 375px;
-        height: 680px !important; /* Felülírja a telefonos magasságot */
-
-        /* Visszaadjuk a lekerekített sarkokat és az árnyékot */
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-
-        /* A safe-area padding itt már nem szükséges, nullázzuk */
-        padding-top: 0;
-        padding-bottom: 0;
-    }
-}
+#like-btn

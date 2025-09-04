@@ -133,7 +133,8 @@ body {
     align-items: center;
     padding: 15px 0;
     background-color: #fff;
-    /* EZ AZ ÚJ SOR A BIZTONSÁGOS TERÜLET KEZELÉSÉRE (pl. alsó Home sáv) */
+    
+    /* EZ AZ ÚJ SOR ADJA HOZZÁ A SZÜKSÉGES TÁVOLSÁGOT ALULRÓL */
     padding-bottom: calc(15px + env(safe-area-inset-bottom));
 }
 .action-buttons button {

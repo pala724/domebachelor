@@ -5,19 +5,19 @@
 }
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background: linear-gradient(to bottom right, #FD297B, #FF655B);
+    /* VÁLTOZÁS: A színátmenet helyett egyszerű háttér, mivel az app már teljes képernyős */
+    background-color: #f7f7f7; 
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     overflow: hidden;
-}
+
 .tinder-container {
-    width: 375px;
-    height: 667px;
+    width: 100%; /* Kitölti a teljes szélességet */
+    height: 100%; /* Kitölti a teljes magasságot */
     background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /* VÁLTOZÁS: A fix méretekhez tartozó stílusokat eltávolítjuk (border-radius, box-shadow) */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -27,6 +27,8 @@ body {
     text-align: center;
     padding: 15px;
     border-bottom: 1px solid #e8e8e8;
+    /* EZ AZ ÚJ SOR A BIZTONSÁGOS TERÜLET KEZELÉSÉRE (pl. Dynamic Island) */
+    padding-top: calc(15px + env(safe-area-inset-top));
 }
 .header .fa-fire {
     color: #fd5068;
@@ -86,14 +88,44 @@ body {
     text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
 .no-more-cards {
-    display: none;
+    display: none; /* Alapértelmezetten rejtett */
+    flex-direction: column; /* Tartalom oszlopban */
+    justify-content: center; /* Vertikálisan középre igazítás */
+    align-items: center; /* Horizontálisan középre igazítás */
     text-align: center;
-    padding: 50px;
+    padding: 20px;
     color: #555;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    font-size: 1.2em;
+    position: absolute; /* Hogy a kártyák helyén jelenjen meg */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Kitölti a teljes tinder-container-t */
+    background-color: #fff; /* Fehér háttér */
+    z-index: 1; /* A kártyák fölé kerül, ha megjelenik */
+    /* VÁLTOZÁS: Felső és alsó padding a biztonságos területhez */
+    padding-top: calc(20px + env(safe-area-inset-top));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    box-sizing: border-box; /* A padding nem növeli a magasságot */
+}
+#final-image {
+    display: none; /* JavaScript jeleníti meg */
+    width: auto; /* A szélesség automatikus, hogy az arány megmaradjon */
+    max-width: 90%; /* Kitölti a szélességet, de hagy egy kis margót */
+    /* VÁLTOZÁS: Magasság optimalizálása a nézethez */
+    max-height: 70vh; /* A nézet magasságának 70%-át használja max. */
+    object-fit: contain; /* A kép arányosan legyen skálázva, ne vágja le */
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.no-more-cards h1 {
+    margin-bottom: 10px;
+    color: #333;
+}
+.no-more-cards p {
+    margin-bottom: 25px; /* Kicsit nagyobb hely a kép előtt */
+}
 }
 .action-buttons {
     display: flex;
@@ -101,6 +133,8 @@ body {
     align-items: center;
     padding: 15px 0;
     background-color: #fff;
+    /* EZ AZ ÚJ SOR A BIZTONSÁGOS TERÜLET KEZELÉSÉRE (pl. alsó Home sáv) */
+    padding-bottom: calc(15px + env(safe-area-inset-bottom));
 }
 .action-buttons button {
     background-color: white;
@@ -205,28 +239,34 @@ body {
 .modal-gallery {
     position: relative;
     width: 100%;
-    margin-bottom: 15px;
+    /* VÁLTOZÁS: Aránytartás a galéria konténernek */
+    aspect-ratio: 1 / 1; 
+    background-color: #f0f0f0; /* Hogy lásd, ha nincs kép */
+    display: flex; /* Hogy a képet középre tudjuk igazítani */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Ha a kép nagyobb, ne lógjon ki */
+    border-radius: 10px; /* A kártyákhoz hasonló sarokgömbölyítés */
 }
 #modal-img {
     width: 100%;
-    height: auto;
-    border-radius: 8px;
-    display: block;
+    height: 100%;
+    /* VÁLTOZÁS: Ez a kulcsfontosságú a kép egységes méretére */
+    object-fit: cover; 
+    display: block; /* Eltünteti az esetleges extra margint */
 }
 .gallery-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
     border: none;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 5px 15px;
-    border-radius: 50%;
+    padding: 10px 15px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-size: 1.5em;
     z-index: 10;
+    border-radius: 5px;
 }
 .gallery-btn:hover {
     background-color: rgba(0, 0, 0, 0.7);
@@ -239,12 +279,12 @@ body {
 }
 .image-counter {
     position: absolute;
-    top: 10px;
+    bottom: 10px;
     right: 10px;
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
-    font-size: 14px;
     padding: 5px 10px;
-    border-radius: 15px;
+    border-radius: 5px;
+    font-size: 0.8em;
     z-index: 10;
 }

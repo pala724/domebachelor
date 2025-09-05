@@ -257,7 +257,7 @@ footer {
 
 .modal-image-container {
     width: 100%;
-    height: 60%;
+    Aspect-ratio: 4/4;
     position: relative;
 }
 
@@ -267,6 +267,7 @@ footer {
     object-fit: cover;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
+    object-position: top;
 }
 
 .prev-img-btn, .next-img-btn {
@@ -306,6 +307,9 @@ footer {
 .modal-profile-info {
     padding: 20px;
     overflow-y: auto;
+    line-height: 1.6;
+    flex: 1; /* Megmondja a doboznak, hogy töltse ki a fennmaradó helyet */
+    min-height: 0; /* Biztosítja a helyes működést flexbox környezetben */
 }
 
 #modal-profile-name-age { margin-bottom: 15px; }

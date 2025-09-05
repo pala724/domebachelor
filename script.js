@@ -1,206 +1,198 @@
+// script.js (Végleges, Superlike funkcióval)
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof profilok === 'undefined') {
-        console.error("Hiba: A 'profilok' változó nem található. Biztosan be van töltve a profilok.js?");
-        return;
-    }
+    // Főoldali elemek és változók
+    const cardsContainer = document.querySelector('.cards-container');
+    const likeBtn = document.getElementById('like-btn');
+    const dislikeBtn = document.getElementById('dislike-btn');
+    const reloadBtn = document.getElementById('reload-btn');
+    const messagesBtn = document.getElementById('messages-btn');
+    const modal = document.getElementById('profile-modal');
+    const closeModalBtn = document.querySelector('.close-modal-btn');
+    const modalImage = document.getElementById('modal-profile-image');
+    const modalNameAge = document.getElementById('modal-profile-name-age');
+    const modalBio = document.getElementById('modal-profile-bio');
+    const prevImgBtn = document.querySelector('.prev-img-btn');
+    const nextImgBtn = document.querySelector('.next-img-btn');
+    const imageDotsContainer = document.querySelector('.image-dots');
+    let currentModalProfile = null;
+    let currentImageIndex = 0;
 
-    const cardContainer = document.querySelector('.card-container');
-    const noMoreCardsView = document.querySelector('.no-more-cards');
-    const likeBtn = document.querySelector('#like-btn');
-    const dislikeBtn = document.querySelector('#dislike-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const modalOverlay = document.getElementById('profile-modal');
-    const closeBtn = document.querySelector('.close-btn');
-    const modalImg = document.getElementById('modal-img');
-    const modalName = document.getElementById('modal-name');
-    const modalDescription = document.getElementById('modal-description');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    const modalCounter = document.getElementById('modal-counter');
-    
-    // VÁLTOZÁS: ÚJ ELEM A VÉGSŐ KÉPHEZ
-    const finalImage = document.getElementById('final-image');
-
-    let jelenlegiKartyaIndex = 0;
-    let isDragging = false;
-    let startX;
-    let currentCard;
-    let currentGalleryImages = [];
-    let currentGalleryIndex = 0;
-
-    // VÁLTOZÁS: IDE ADD MEG A VÉGSŐ KÉP ELÉRÉSI ÚTVONALÁT!
-    // Tedd be a "kepek" mappába a képet, és ide írd be a nevét.
-    const vegsokepUtvonala = 'kepek/Adi1.jpg'; // Példa: kepek/eskuvoi_kep.jpg
-
-    function init() {
-        if (profilok.length > 0) {
-            renderCards();
-            addEventListeners();
-        } else {
-            showNoMoreCards();
-        }
-    }
-
-    function renderCards() {
-        cardContainer.innerHTML = '';
-        profilok.slice().reverse().forEach((profil, index) => {
-            const card = document.createElement('div');
-            card.classList.add('card');
-            card.style.backgroundImage = `url('${profil.kepek[0]}')`;
-            card.style.zIndex = index;
-            card.innerHTML = `<div class="profile-info"><h2>${profil.nev}</h2><p>${profil.bemutatkozas}</p></div><div class="label like">LIKE</div><div class="label nope">NOPE</div>`;
-            cardContainer.appendChild(card);
-            
-            addDragEventListeners(card, profil);
+    function showFinalMessage() {
+        cardsContainer.innerHTML = `<div class="no-matches-container"><p>Ne ezt a szart nyomkodd, te már megtaláltad a tökéletes párt!</p><i class="fa-solid fa-heart" id="final-heart"></i></div>`;
+        document.getElementById('final-heart').addEventListener('click', () => {
+            createSingleCard(fianceeProfile, true); 
         });
     }
 
-    function addEventListeners() {
-        likeBtn.addEventListener('click', () => swipeFromButton('right'));
-        dislikeBtn.addEventListener('click', () => swipeFromButton('left'));
-        resetBtn.addEventListener('click', () => location.reload());
-        closeBtn.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', (event) => { if (event.target === modalOverlay) closeModal(); });
+    function checkIfDeckIsEmpty() {
+        setTimeout(() => {
+            if (cardsContainer.querySelectorAll('.card').length === 0) {
+                showFinalMessage();
+            }
+        }, 50);
+    }
+    
+    function updateMatchCounter() {
+        const matches = JSON.parse(localStorage.getItem('matches')) || [];
+        let badge = messagesBtn.querySelector('.notification-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'notification-badge';
+            messagesBtn.appendChild(badge);
+        }
+        badge.style.display = matches.length > 0 ? 'block' : 'none';
+    }
+
+    function createProfileCards() {
+        cardsContainer.innerHTML = ''; 
+        const matches = JSON.parse(localStorage.getItem('matches')) || [];
+        const matchedNames = new Set(matches.map(match => match.name));
+        const disliked = JSON.parse(localStorage.getItem('dislikedProfiles')) || [];
+        const dislikedNames = new Set(disliked.map(p => p.name));
+        const profilesToDisplay = profiles.filter(profile => 
+            !matchedNames.has(profile.name) && !dislikedNames.has(profile.name)
+        );
+
+        if (profilesToDisplay.length === 0) {
+            showFinalMessage();
+            return;
+        }
+
+        profilesToDisplay.slice().reverse().forEach(profile => {
+            const originalIndex = profiles.findIndex(p => p.name === profile.name);
+            createSingleCard(profile, false, originalIndex);
+        });
+    }
+
+    function createSingleCard(profile, isSpecial, index = -1) {
+        if(isSpecial) cardsContainer.innerHTML = '';
+        const card = document.createElement('div');
+        card.classList.add('card');
+        const imageUrl = typeof profile.images[0] === 'object' ? profile.images[0].src : profile.images[0];
+        card.style.backgroundImage = `url(${imageUrl})`;
+        card.dataset.profileIndex = isSpecial ? 'special' : index;
         
-        nextBtn.addEventListener('click', () => {
-            if (currentGalleryIndex < currentGalleryImages.length - 1) {
-                currentGalleryIndex++;
-                updateGalleryView();
-            }
-        });
-        prevBtn.addEventListener('click', () => {
-            if (currentGalleryIndex > 0) {
-                currentGalleryIndex--;
-                updateGalleryView();
-            }
-        });
-    }
-
-    function addDragEventListeners(card, profil) {
-        let offsetX, offsetY;
-
-        const onStart = (e) => {
-            if (modalOverlay.style.display === 'flex' || e.target.closest('.action-buttons')) return;
-            currentCard = card;
-            startX = e.clientX || e.touches[0].clientX;
-        };
-
-        const onMove = (e) => {
-            if (currentCard !== card) return;
-            
-            if (startX === undefined) return;
-            isDragging = true;
-            
-            e.preventDefault();
-            const clientX = e.clientX || e.touches[0].clientX;
-            const deltaX = clientX - startX;
-            const rotation = deltaX / 20;
-            
-            card.style.transition = 'none';
-            card.style.transform = `translateX(${deltaX}px) rotate(${rotation}deg)`;
-            
-            if (deltaX > 50) {
-                card.classList.add('swiping-right');
-                card.classList.remove('swiping-left');
-            } else if (deltaX < -50) {
-                card.classList.add('swiping-left');
-                card.classList.remove('swiping-right');
-            } else {
-                card.classList.remove('swiping-right', 'swiping-left');
-            }
-        };
-
-        const onEnd = (e) => {
-            if (currentCard !== card || startX === undefined) return;
-
-            const clientX = e.clientX || (e.changedTouches && e.changedTouches[0].clientX) || startX;
-            const deltaX = clientX - startX;
-            
-            const clickThreshold = 5;
-
-            if (!isDragging && Math.abs(deltaX) < clickThreshold) {
-                openModal(profil);
-            } else {
-                if (Math.abs(deltaX) > 100) {
-                    swipe(deltaX > 0 ? 'right' : 'left', card);
-                } else {
-                    card.style.transition = 'transform 0.3s ease-out';
-                    card.style.transform = 'translateX(0) rotate(0deg)';
-                    card.classList.remove('swiping-right', 'swiping-left');
-                }
-            }
-            
-            isDragging = false;
-            startX = undefined;
-            currentCard = null;
-        };
-
-        card.addEventListener('mousedown', onStart);
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onEnd);
-        card.addEventListener('touchstart', onStart, { passive: true });
-        document.addEventListener('touchmove', onMove, { passive: false });
-        document.addEventListener('touchend', onEnd);
-    }
-    
-    function swipeFromButton(direction) {
-        const cards = Array.from(cardContainer.querySelectorAll('.card:not(.swiped)'));
-        if (cards.length === 0) return;
-        const topCard = cards[cards.length - 1];
-        if (direction === 'right') {
-            topCard.classList.add('swiping-right');
+        // MÓDOSÍTÁS: A speciális kártya más pecséteket kap
+        if (isSpecial) {
+            card.innerHTML = `<div class="stamp superlike"><i class="fa-solid fa-star"></i> SUPERLIKE</div>`;
         } else {
-            topCard.classList.add('swiping-left');
+            card.innerHTML = `<div class="stamp like">LIKE</div><div class="stamp nope">NOPE</div>`;
         }
-        setTimeout(() => {
-            swipe(direction, topCard);
-        }, 100);
+        
+        card.innerHTML += `<div class="card-info"><h2>${profile.name}, ${profile.age}</h2><p class="tagline">"${profile.tagline}"</p></div>`;
+        cardsContainer.appendChild(card);
+        addCardEventListeners();
     }
 
-    function swipe(direction, cardToSwipe) {
-        if (!cardToSwipe) return;
-        cardToSwipe.classList.remove('swiping-left', 'swiping-right');
-        cardToSwipe.classList.add(direction);
-        cardToSwipe.classList.add('swiped');
-        jelenlegiKartyaIndex++;
-        setTimeout(() => {
-             cardToSwipe.style.display = 'none';
-             if (jelenlegiKartyaIndex >= profilok.length) {
-                showNoMoreCards();
+    function addCardEventListeners() {
+        const topCard = cardsContainer.querySelector('.card:last-child');
+        if (!topCard) return;
+
+        let startPoint = { x: 0, y: 0 };
+        let isDragging = false;
+        const onDragStart = (e) => { isDragging = true; topCard.classList.add('dragging'); startPoint = { x: e.pageX ?? e.touches[0].pageX, y: e.pageY ?? e.touches[0].pageY }; };
+        const onDragMove = (e) => {
+            if (!isDragging) return;
+            const currentPoint = { x: e.pageX ?? e.touches[0].pageX, y: e.pageY ?? e.touches[0].pageY };
+            const deltaX = currentPoint.x - startPoint.x;
+            const deltaY = currentPoint.y - startPoint.y;
+            const rotate = deltaX * 0.1;
+            e.preventDefault();
+            topCard.style.transform = `translate(-50%, -50%) translateX(${deltaX}px) translateY(${deltaY}px) rotate(${rotate}deg)`;
+            
+            const opacity = Math.min(Math.abs(deltaX) / (topCard.clientWidth / 2), 1);
+            
+            // MÓDOSÍTÁS: A pecsét megjelenítésének logikája
+            if (topCard.dataset.profileIndex === 'special') {
+                const superlikeStamp = topCard.querySelector('.superlike');
+                if(superlikeStamp) superlikeStamp.style.opacity = opacity;
+            } else {
+                const likeStamp = topCard.querySelector('.like');
+                const nopeStamp = topCard.querySelector('.nope');
+                if(likeStamp) likeStamp.style.opacity = deltaX > 0 ? opacity : 0;
+                if(nopeStamp) nopeStamp.style.opacity = deltaX < 0 ? opacity : 0;
             }
-        }, 300);
+        };
+
+        const onDragEnd = (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            topCard.classList.remove('dragging');
+            topCard.style.transform = '';
+            const deltaX = (e.pageX ?? e.changedTouches[0].pageX) - startPoint.x;
+            const decisionThreshold = 100;
+            if (Math.abs(deltaX) > decisionThreshold) {
+                const direction = deltaX > 0 ? 1 : -1;
+                const decision = direction === 1 ? 'like' : 'nope';
+                const profileIndex = topCard.dataset.profileIndex;
+                
+                if (profileIndex === 'special') {
+                    setFinalMatch();
+                } else {
+                    const profile = profiles[parseInt(profileIndex)];
+                    if (decision === 'like') saveMatch(profile);
+                    else saveDislike(profile);
+                }
+
+                topCard.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
+                // A speciális kártyát mindig jobbra húzzuk ki a végén
+                const finalDirection = profileIndex === 'special' ? 1 : direction;
+                topCard.style.transform = `translateX(${finalDirection * 500}px) rotate(${finalDirection * 30}deg)`;
+                topCard.style.opacity = '0';
+                setTimeout(() => { topCard.remove(); checkIfDeckIsEmpty(); addCardEventListeners(); }, 500);
+            } else {
+                if (topCard.querySelector('.like')) topCard.querySelector('.like').style.opacity = 0;
+                if (topCard.querySelector('.nope')) topCard.querySelector('.nope').style.opacity = 0;
+                if (topCard.querySelector('.superlike')) topCard.querySelector('.superlike').style.opacity = 0;
+            }
+        };
+        topCard.addEventListener('mousedown', onDragStart); topCard.addEventListener('touchstart', onDragStart, { passive: true }); document.addEventListener('mousemove', onDragMove); document.addEventListener('touchmove', onDragMove, { passive: false }); document.addEventListener('mouseup', onDragEnd); document.addEventListener('touchend', onDragEnd);
+        topCard.addEventListener('click', (e) => { const deltaX = (e.pageX ?? 0) - startPoint.x; if (Math.abs(deltaX) < 5) { const profileIndex = topCard.dataset.profileIndex; const profileToShow = profileIndex === 'special' ? fianceeProfile : profiles[parseInt(profileIndex)]; openProfileModal(profileToShow); } });
     }
 
-    function openModal(profil) {
-        currentGalleryImages = profil.kepek;
-        currentGalleryIndex = 0;
-        updateGalleryView();
-        modalName.innerText = profil.nev;
-        modalDescription.innerText = profil.reszletesLeiras;
-        modalOverlay.style.display = 'flex';
-    }
+    function makeDecision(decision) {
+        const topCard = document.querySelector('.card:last-child');
+        if (!topCard) return;
+        const profileIndex = topCard.dataset.profileIndex;
 
-    function closeModal() {
-        modalOverlay.style.display = 'none';
-    }
-    
-    function updateGalleryView() {
-        modalImg.src = currentGalleryImages[currentGalleryIndex];
-        modalCounter.textContent = `${currentGalleryIndex + 1} / ${currentGalleryImages.length}`;
-        prevBtn.style.display = currentGalleryIndex > 0 ? 'block' : 'none';
-        nextBtn.style.display = currentGalleryIndex < currentGalleryImages.length - 1 ? 'block' : 'none';
-        modalCounter.style.display = currentGalleryImages.length > 1 ? 'block' : 'none';
-    }
-    
-    // VÁLTOZÁS: A showNoMoreCards függvény most megjeleníti a végképet
-    function showNoMoreCards() {
-        cardContainer.style.display = 'none';
-        noMoreCardsView.style.display = 'block';
-        if (vegsokepUtvonala) {
-            finalImage.src = vegsokepUtvonala;
-            finalImage.style.display = 'block'; // Megjelenítjük a képet
+        if (profileIndex === 'special') {
+            setFinalMatch();
+            const superlikeStamp = topCard.querySelector('.superlike');
+            if(superlikeStamp) superlikeStamp.style.opacity = 1;
+        } else {
+            const profile = profiles[parseInt(profileIndex)];
+            if (decision === 'like') saveMatch(profile);
+            else saveDislike(profile);
+            const stamp = topCard.querySelector(decision === 'like' ? '.like' : '.nope');
+            if(stamp) stamp.style.opacity = 1;
         }
+
+        const direction = (profileIndex === 'special' || decision === 'like') ? 1 : -1;
+        topCard.style.transition = 'transform 0.7s ease, opacity 0.7s ease';
+        topCard.style.transform = `translateX(${direction * 500}px) rotate(${direction * 30}deg)`;
+        topCard.style.opacity = '0';
+        setTimeout(() => { topCard.remove(); checkIfDeckIsEmpty(); addCardEventListeners(); }, 700);
     }
-    
-    init();
+
+    function saveMatch(profile) { if (!profile) return; let matches = JSON.parse(localStorage.getItem('matches')) || []; if (!matches.some(m => m.name === profile.name)) { matches.push(profile); localStorage.setItem('matches', JSON.stringify(matches)); updateMatchCounter(); } }
+    function saveDislike(profile) { if (!profile) return; let disliked = JSON.parse(localStorage.getItem('dislikedProfiles')) || []; if (!disliked.some(p => p.name === profile.name)) { disliked.push(profile); localStorage.setItem('dislikedProfiles', JSON.stringify(disliked)); } }
+    function setFinalMatch() { const finalMatch = [fianceeProfile]; localStorage.setItem('matches', JSON.stringify(finalMatch)); updateMatchCounter(); }
+    function openProfileModal(profile) { currentModalProfile = profile; currentImageIndex = 0; updateModalContent(); modal.style.display = 'flex'; }
+    function closeModal() { modal.style.display = 'none'; }
+    function updateModalContent() { const profile = currentModalProfile; modalNameAge.textContent = `${profile.name}, ${profile.age}`; const currentImage = profile.images[currentImageIndex]; const isObjectFormat = typeof currentImage === 'object'; modalImage.src = isObjectFormat ? currentImage.src : currentImage; modalBio.textContent = isObjectFormat ? currentImage.desc : profile.bio; prevImgBtn.style.display = profile.images.length > 1 ? 'block' : 'none'; nextImgBtn.style.display = profile.images.length > 1 ? 'block' : 'none'; imageDotsContainer.innerHTML = ''; if (profile.images.length > 1) { profile.images.forEach((_, index) => { const dot = document.createElement('div'); dot.classList.add('dot'); if (index === currentImageIndex) dot.classList.add('active'); imageDotsContainer.appendChild(dot); }); } }
+    function showNextImage() { currentImageIndex = (currentImageIndex + 1) % currentModalProfile.images.length; updateModalContent(); }
+    function showPrevImage() { currentImageIndex = (currentImageIndex - 1 + currentModalProfile.images.length) % currentModalProfile.images.length; updateModalContent(); }
+
+    likeBtn.addEventListener('click', () => makeDecision('like'));
+    dislikeBtn.addEventListener('click', () => makeDecision('nope'));
+    reloadBtn.addEventListener('click', () => { localStorage.removeItem('matches'); localStorage.removeItem('dislikedProfiles'); createProfileCards(); updateMatchCounter(); });
+    messagesBtn.addEventListener('click', () => { window.location.href = 'messages.html'; });
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    nextImgBtn.addEventListener('click', showNextImage);
+    prevImgBtn.addEventListener('click', showPrevImage);
+
+    createProfileCards();
+    updateMatchCounter();
 });

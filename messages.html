@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Üzenetek</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="messages.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+
+        <div id="match-list-view">
+            <header class="messages-header">
+                <a href="index.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+                <h1>Matches</h1>
+            </header>
+            <main id="matches-list" class="matches-container">
+                </main>
+        </div>
+
+        <div id="conversation-view" style="display: none;">
+            <header class="conversation-header">
+                <button id="back-to-list-btn" class="back-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <img id="convo-avatar" src="" alt="Avatar" class="avatar">
+                <h3 id="convo-name"></h3>
+            </header>
+            <main id="chat-container" class="chat-container">
+                </main>
+        </div>
+
+    </div>
+
+    <div id="profile-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal-btn">&times;</span>
+            <div class="modal-image-container">
+                <img id="modal-profile-image" src="" alt="Profilkép">
+                <button class="prev-img-btn">&lt;</button>
+                <button class="next-img-btn">&gt;</button>
+                <div class="image-dots"></div>
+            </div>
+            <div class="modal-profile-info">
+                <h2 id="modal-profile-name-age"></h2>
+                <p id="modal-profile-bio"></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="messages.js"></script>
+</body>
+</html>

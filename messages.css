@@ -1,0 +1,151 @@
+/* messages.css */
+
+/* A két fő nézet pozicionálása */
+#match-list-view, #conversation-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Meccsek lista fejléc */
+.messages-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.messages-header h1 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.back-btn {
+    position: absolute;
+    left: 20px;
+    font-size: 1.5rem;
+    color: #aaa;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.back-btn:hover {
+    color: var(--primary-color);
+}
+
+/* Meccsek lista */
+.matches-container {
+    padding: 10px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.match-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.match-item:last-child {
+    border-bottom: none;
+}
+
+.match-item:hover {
+    background-color: #f9f9f9;
+}
+
+.avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.match-details h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.match-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.no-matches {
+    text-align: center;
+    margin-top: 50px;
+    color: #999;
+}
+
+
+/* Beszélgetés nézet */
+.conversation-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.conversation-header .back-btn {
+    position: static; /* Itt nem kell absolute pozíció */
+    margin-right: 10px;
+}
+
+.conversation-header .avatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.conversation-header h3 {
+    font-size: 1.1rem;
+}
+
+.chat-container {
+    flex-grow: 1;
+    padding: 20px 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-bubble {
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 80%;
+    line-height: 1.5;
+    background-color: #e9e9eb;
+    color: #000;
+    align-self: flex-start; /* Üzenet a bal oldalon */
+    animation: popIn 0.3s ease-out forwards;
+    opacity: 0;
+}
+
+/* Animáció az üzenetek beúszásához */
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

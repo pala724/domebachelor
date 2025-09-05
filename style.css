@@ -1,6 +1,16 @@
-/* ================================================= */
-/* ==== ALAPBEÁLLÍTÁSOK ÉS MOBIL NÉZET (MOBILE-FIRST) ==== */
-/* ================================================= */
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+:root {
+    --primary-color: #FD297B;
+    --secondary-color: #FF655B;
+    --background-color: #f0f2f5;
+    --card-bg-color: #ffffff;
+    --text-color: #333;
+    --border-color: #e0e0e0;
+    --like-color: #4CAF50;
+    --nope-color: #F44336;
+}
 
 * {
     box-sizing: border-box;
@@ -9,134 +19,346 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #f0f2f5;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     overflow: hidden;
-    margin: 0;
 }
 
-.tinder-container {
+.app-container {
     width: 100%;
+    max-width: 400px;
     height: 100%;
-    background-color: #fff;
+    max-height: 800px;
+    background-color: var(--card-bg-color);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
 }
 
-.header {
-    text-align: center;
-    padding: 15px;
-    border-bottom: 1px solid #e8e8e8;
-    background-color: #fff;
-    position: relative;
-    z-index: 100;
-    /* JAVÍTÁS: Biztonsági margó a felső sávhoz */
-    padding-top: calc(15px + env(safe-area-inset-top));
+/* Fejléc */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-#reset-btn {
+header h1 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+header .logo {
+    font-size: 1.8rem;
+    color: var(--secondary-color);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+header .logo:hover {
+    transform: scale(1.1);
+}
+
+#messages-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    position: relative; /* Értesítési pötty pozicionálásához */
+}
+
+#messages-btn:hover {
+    color: var(--primary-color);
+}
+
+/* Értesítési pötty (Messenger stílus) */
+.notification-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background-color: #ff3b30;
+    border-radius: 50%;
+    border: 2px solid white;
+    font-size: 0;
+    color: transparent;
+    display: none;
+}
+
+/* Kártyák */
+.cards-container {
+    flex-grow: 1;
+    position: relative;
+    padding: 15px;
+    overflow: hidden;
+    min-height: 0; /* EZ AZ ÚJ, JAVÍTÓ SOR */
+}
+
+.card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%; /* A konténer szélességének 95%-a */
+    height: 90%; /* A konténer magasságának 90%-a */
+    max-width: 350px; /* Maximális szélesség nagyobb képernyőn */
+    
+    /* A többi stílus változatlan marad */
+    padding: 0;
+    border-radius: 10px;
+    background-color: var(--card-bg-color);
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    cursor: grab;
+    will-change: transform, opacity;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.card.dragging {
+    cursor: grabbing;
+    transition: none;
+}
+
+.card-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    color: white;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.card-info h2 {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.card-info .tagline {
+    font-size: 0.95rem;
+    font-style: italic;
+    margin-top: 8px;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+/* Like/Nope pecsét */
+.stamp {
+    position: absolute;
+    top: 50px;
+    font-size: 3rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 5px solid;
+    padding: 5px 15px;
+    border-radius: 10px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.stamp.like {
+    color: var(--like-color);
+    border-color: var(--like-color);
+    transform: rotate(-20deg);
+    left: 20px;
+}
+
+.stamp.nope {
+    color: var(--nope-color);
+    border-color: var(--nope-color);
+    transform: rotate(20deg);
+    right: 20px;
+}
+
+/* Lábléc és gombok */
+footer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.action-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+#dislike-btn { color: var(--nope-color); }
+#like-btn { color: var(--like-color); }
+
+/* Részletes profil (Modális ablak) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90%;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    color: #555;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.modal-image-container {
+    width: 100%;
+    height: 60%;
+    position: relative;
+}
+
+#modal-profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.prev-img-btn, .next-img-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.prev-img-btn { left: 10px; }
+.next-img-btn { right: 10px; }
+.prev-img-btn:hover, .next-img-btn:hover { background-color: rgba(0, 0, 0, 0.7); }
+
+.image-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 0 4px;
+    transition: background-color 0.3s;
+}
+.dot.active { background-color: white; }
+
+.modal-profile-info {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+#modal-profile-name-age { margin-bottom: 15px; }
+#modal-profile-bio { line-height: 1.6; }
+
+/* Reszponzivitás */
+@media (max-width: 420px) {
+    .app-container {
+        border-radius: 0;
+        height: 100svh;
+        max-height: none;
+    }
+}
+/* style.css - ezt a részt add a fájl végéhez */
+
+.no-matches-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    padding: 30px;
+    color: #888;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+#final-heart {
+    font-size: 6rem; /* Jó nagy szív */
+    color: var(--primary-color);
+    margin-top: 25px;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
 }
 
-#reset-btn:hover {
-    transform: scale(1.15);
+#final-heart:hover {
+    transform: scale(1.15) rotate(5deg); /* Kis animáció, ha ráviszed az egeret */
+}
+/* style.css - ezt a részt add a fájl végéhez */
+
+.stamp.superlike {
+    color: #4A90E2; /* Kékes-lilás Superlike szín */
+    border-color: #4A90E2;
+    transform: rotate(-15deg);
+    left: 50%;
+    margin-left: -100px; /* Középre igazítás */
+    width: 200px;
+    text-align: center;
 }
 
-.card-container {
-    flex: 1; /* Kitölti a fejléc és a gombok közötti helyet */
-    min-height: 0; /* Flexbox túlcsordulás elleni javítás */
-    position: relative;
-    width: 90%;
-    margin: 2% 5%;
-}
-
-.card {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    border-radius: 10px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.action-buttons {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    padding: 15px 0;
-    background-color: #fff;
-    position: relative;
-    z-index: 100;
-    /* JAVÍTÁS: Biztonsági margó az alsó sávhoz */
-    padding-bottom: calc(15px + env(safe-area-inset-bottom));
-}
-
-/* Az innen következő szabályok már helyesek voltak, a teljesség kedvéért itt vannak */
-.profile-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; color: white; background-color: rgba(0, 0, 0, 0.85); border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-.profile-info h2 { margin: 0; font-size: 24px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
-.profile-info p { margin-top: 5px; font-size: 16px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
-.card.dragging { cursor: grabbing; }
-.card.right { transform: translateX(150%) rotate(20deg); opacity: 0; }
-.card.left { transform: translateX(-150%) rotate(-20deg); opacity: 0; }
-.card .label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8) rotate(-45deg); font-size: 60px; font-weight: bold; padding: 10px 20px; border-radius: 10px; opacity: 0; transition: all 0.2s ease-in-out; pointer-events: none; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); }
-.card .label.like { color: #2db9b3; border: 5px solid #2db9b3; transform: translate(-50%, -50%) scale(1) rotate(-30deg); }
-.card .label.nope { color: #fd5068; border: 5px solid #fd5068; transform: translate(-50%, -50%) scale(1) rotate(30deg); }
-.card.swiping-left .label.nope { opacity: 1; }
-.card.swiping-right .label.like { opacity: 1; }
-.action-buttons button { background-color: white; border: 1px solid #e8e8e8; border-radius: 50%; width: 60px; height: 60px; font-size: 28px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; }
-.action-buttons button:hover { transform: scale(1.1); }
-#dislike-btn i { color: #fd5068; }
-#like-btn i { color: #2db9b3; }
-.no-more-cards { display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; color: #555; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #fff; z-index: 50; box-sizing: border-box; }
-#final-image { display: none; width: auto; max-width: 90%; max-height: 70vh; object-fit: contain; border-radius: 10px; margin-top: 20px; }
-.modal-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; }
-.modal-content { background-color: #fff; padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.3); animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-.close-btn { position: absolute; top: 10px; right: 20px; font-size: 30px; font-weight: bold; color: #aaa; cursor: pointer; z-index: 15; }
-.close-btn:hover { color: #333; }
-.modal-gallery { position: relative; width: 100%; aspect-ratio: 1 / 1; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; overflow: hidden; border-radius: 10px; margin-bottom: 15px; }
-#modal-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.gallery-btn { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.4); color: white; border: none; font-size: 24px; font-weight: bold; padding: 5px 15px; border-radius: 50%; cursor: pointer; transition: background-color 0.2s; z-index: 10; }
-.gallery-btn:hover { background-color: rgba(0, 0, 0, 0.7); }
-.prev-btn { left: 10px; }
-.next-btn { right: 10px; }
-.image-counter { position: absolute; top: 10px; right: 10px; background-color: rgba(0, 0, 0, 0.6); color: white; font-size: 14px; padding: 5px 10px; border-radius: 15px; z-index: 10; }
-#modal-name { font-size: 22px; margin-bottom: 10px; }
-#modal-description { font-size: 16px; line-height: 1.5; color: #555; }
-
-/* ================================================= */
-/* ==== ASZTALI GÉP / NAGYOBB KÉPERNYŐ STÍLUSOK ==== */
-/* ================================================= */
-
-@media (min-width: 451px) {
-    body {
-        background: linear-gradient(to bottom right, #FD297B, #FF655B);
-    }
-    .tinder-container {
-        width: 375px;
-        height: 680px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        /* Asztali gépen nincs szükség a safe area-ra */
-        padding-top: 0;
-        padding-bottom: 0;
-    }
-    .header {
-        padding-top: 15px; /* Visszaállítjuk az alapértelmezett paddingot */
-    }
-    .action-buttons {
-        padding-bottom: 15px; /* Visszaállítjuk az alapértelmezett paddingot */
-    }
+.stamp.superlike i {
+    display: block; /* Ikon a szöveg fölé */
+    font-size: 2rem;
+    margin-bottom: 5px;
 }

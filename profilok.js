@@ -23,12 +23,36 @@ const profiles = [
         "Bizonyítsd be, hogy nem csak a szád jár."
     ]
   },
+  
   {
-    name: 'Hanna',
+    name: 'Klárika',
+    age: 18,
+    images: ['kepek/klari.png', 'kepek/klari2.png'],
+    tagline: 'Most lettem 18, mindenre kapható vagyok!😜😈',
+    bio: 'Ice, Ice, Baby',
+    chatMessages: [
+        "Óvatosan nézz rám, mert ha sokáig tartod a tekinteted, elolvadok, mint egy jégkrém a napon.",
+        "És ha én nedves leszek, te is!"
+    ]
+  },
+  
+  {
+    name: 'Eperke',
     age: 29,
-    images: ['kepek/hanna.png'],
-    tagline: 'Szia! A nevem Microsoft. Ma este nálad crashelhetek?',
-    bio: 'Imádom az állatokat, két kutyám van. Egy állatbarát, megbízható partnert keresek, aki nem ijed meg egy kis szőrtől a ruháján. 🐶💕',
+    images: ['kepek/eperke.png', 'kepek/eperke2.png'],
+    tagline: 'Nem csak a nevem édes 😉',
+    bio: 'Istenfélő, törvénytisztelő állampolgár vagyok! Itt keresem azt a férfit aki eltart és a tenyerén hordoz.😜',
+    chatMessages: [
+        "Szia béby, láttam szép nagy autód van 😍",
+        "Mennyit keresel?🙈"
+    ]
+  },
+  {
+    name: 'Hannah',
+    age: 29,
+    images: ['kepek/hanna.png'], 
+    tagline: 'Csábíts el tigris!',
+    bio: 'Egy életvidám, magabiztos lány vagyok, aki szeret szép helyeken időzni, utazni és a luxus világát felfedezni. Hiszem, hogy az élet túl rövid ahhoz, hogy unalmasan éljük, ezért mindig keresem azokat a férfiakat, akik nemcsak sikeresek és céltudatosak, de tudják élvezni is azt, amit elértek. Szeretek inspiráló emberek társaságában lenni, akik megmutatják, hogy mindig van feljebb és szebben. Ha szeretsz élni, stílusosan, akkor biztosan jól kijövünk egymással.',
     chatMessages: [
         "Elég a szavakból. Mutasd meg, milyen állat lakozik benned.",
         "Nálam a jelszó: 'rosszalkodj'. Ha kitalálod, beengedlek. 😉"
@@ -43,6 +67,17 @@ const profiles = [
     chatMessages: [
         "Ha ezt olvasod baromi nagy mázlid van",
         "És ha nekem is, nem csak az baromi nagy 😉"
+    ]
+  },
+      {
+    name: 'Dóri',
+    age: 22,
+    images: ['kepek/dome.png', 'kepek/dome2.png'],
+    tagline: 'Egy biztos, nálam jobban senki nem isner🤭',
+    bio: '',
+    chatMessages: [
+        "Szerencséd hogy jobbra huztál😜",
+        "Ígérem ma aládnzúlok"
     ]
   },
   {
@@ -68,6 +103,7 @@ const profiles = [
     ]
   }
 ];
+
 
 
 const fianceeProfile = {
